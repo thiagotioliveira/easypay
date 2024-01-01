@@ -1,7 +1,5 @@
-package com.thiagoti.easypay.domain.dto;
+package com.thiagoti.easypay.external.dto;
 
-import java.math.BigDecimal;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +12,15 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @ToString
-public class WalletDTO {
+public class NotificationStatusDTO {
 
-    private UUID id;
+    private boolean message;
 
-    private UUID userId;
+    public boolean wasSent() {
+        return message;
+    }
 
-    private BigDecimal amount;
+    public boolean wasNotSent() {
+        return Boolean.FALSE.equals(wasSent());
+    }
 }

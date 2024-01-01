@@ -1,5 +1,6 @@
 package com.thiagoti.easypay.domain;
 
+import com.thiagoti.easypay.domain.annotation.SendNotification;
 import com.thiagoti.easypay.domain.dto.CreateTransferDTO;
 import com.thiagoti.easypay.domain.dto.TransferDTO;
 import com.thiagoti.easypay.domain.entity.Transfer;
@@ -16,13 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 class TransferServiceImpl implements TransferService {
 
     private final Validator validator;
+    private final TransferAuthorizerService transferAuthorizerService;
     private final TransferMapper mapper;
     private final TransferRepository repository;
     private final WalletService walletService;
 
     @Override
     @Transactional
+    @SendNotification
     public TransferDTO create(CreateTransferDTO createTransferDTO) {
+        transferAuthorizerService.authorize();
+
         final var transfer = mapper.toEntity(createTransferDTO);
         if (transfer.getAmount().compareTo(transfer.getWalletFrom().getAmount()) > 0) {
             throw new BusinessRuleException("insufficient funds.");
