@@ -1,9 +1,9 @@
 package com.thiagoti.easypay.domain;
 
-import static com.thiagoti.easypay.domain.UserMock.USER_CPF_CNPJ;
-import static com.thiagoti.easypay.domain.UserMock.USER_EMAIL;
-import static com.thiagoti.easypay.domain.UserMock.USER_NAME;
-import static com.thiagoti.easypay.domain.UserMock.createAsUser;
+import static com.thiagoti.easypay.domain.mock.UserMock.USER_CPF_CNPJ;
+import static com.thiagoti.easypay.domain.mock.UserMock.USER_EMAIL;
+import static com.thiagoti.easypay.domain.mock.UserMock.USER_NAME;
+import static com.thiagoti.easypay.domain.mock.UserMock.createAsUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
