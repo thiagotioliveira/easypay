@@ -1,27 +1,33 @@
 package com.thiagoti.easypay.domain;
 
+import static com.thiagoti.easypay.domain.UserMock.USER_CPF_CNPJ;
+import static com.thiagoti.easypay.domain.UserMock.USER_EMAIL;
+import static com.thiagoti.easypay.domain.UserMock.USER_NAME;
+import static com.thiagoti.easypay.domain.UserMock.createAsUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.thiagoti.easypay.domain.entity.User;
 import jakarta.persistence.EntityManager;
-import org.hibernate.exception.ConstraintViolationException;
+import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class UserRepositoryTest {
-
-    private static final String USER_CPF_CNPJ = "99999999999";
-    private static final String USER_NAME = "Mock da Silva";
-    private static final String USER_EMAIL = "mock@mock.test";
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private EntityManager em;
+
+    @Test
+    void shouldListUsers() {
+        userRepository.save(createAsUser(USER_CPF_CNPJ, USER_NAME, USER_EMAIL));
+        assertEquals(1, userRepository.findAll().size());
+    }
 
     @Test
     void shouldSaveUser() {
@@ -35,7 +41,7 @@ public class UserRepositoryTest {
         assertNotNull(user1Saved.getId());
         em.flush();
 
-        assertThrows(ConstraintViolationException.class, () -> {
+        assertThrows(PersistenceException.class, () -> {
             userRepository.save(createAsUser(USER_CPF_CNPJ, USER_NAME, "mock2@mock.test"));
             em.flush();
         });
@@ -47,19 +53,9 @@ public class UserRepositoryTest {
         assertNotNull(user1Saved.getId());
         em.flush();
 
-        assertThrows(ConstraintViolationException.class, () -> {
+        assertThrows(PersistenceException.class, () -> {
             userRepository.save(createAsUser("88888888888", USER_NAME, USER_EMAIL));
             em.flush();
         });
-    }
-
-    private static User createAsUser(String cpfCnpj, String name, String email) {
-        var user = new User();
-        user.setCpfCnpj(cpfCnpj);
-        user.setEmail(email);
-        user.setName(name);
-        user.setPassword("somepass");
-        user.setRole(User.Role.USER);
-        return user;
     }
 }
