@@ -1,9 +1,7 @@
 package com.thiagoti.easypay.domain.mock;
 
-import java.util.Random;
-
 import com.thiagoti.easypay.domain.entity.User;
-
+import java.util.Random;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,17 +17,17 @@ public class UserMock {
         user.setCpfCnpj(cpfCnpj);
         return user;
     }
-    
+
     public static User createAsUser(String name, String email) {
-    	var user = new User();
-    	user.setCpfCnpj(generateRandomNumericString());
-    	user.setEmail(email);
-    	user.setName(name);
-    	user.setPassword(generateRandomNumericString());
-    	user.setRole(User.Role.USER);
-    	return user;
+        var user = new User();
+        user.setCpfCnpj(generateRandomNumericString());
+        user.setEmail(email);
+        user.setName(name);
+        user.setPassword(generateRandomNumericString());
+        user.setRole(User.Role.USER);
+        return user;
     }
-    
+
     public static String generateRandomNumericString() {
         Random random = new Random();
         int length = random.nextBoolean() ? 11 : 14;

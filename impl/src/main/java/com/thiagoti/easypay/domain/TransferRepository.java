@@ -1,11 +1,7 @@
 package com.thiagoti.easypay.domain;
 
+import com.thiagoti.easypay.domain.entity.Transfer;
 import java.util.UUID;
-
 import org.springframework.data.repository.CrudRepository;
 
-import com.thiagoti.easypay.domain.entity.Transfer;
-
-interface TransferRepository extends CrudRepository<Transfer, UUID> {
-
-}
+interface TransferRepository extends CrudRepository<Transfer, UUID> {}
