@@ -37,6 +37,10 @@ public class User {
     @Column(length = 50)
     private Role role;
 
+    public boolean isUser() {
+        return Role.USER.equals(this.role);
+    }
+
     public enum Role {
         USER,
         SHOPKEEPER

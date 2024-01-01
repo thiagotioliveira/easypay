@@ -20,18 +20,26 @@ public class UserMock {
 
     public static User createAsUser(String name, String email) {
         var user = new User();
-        user.setCpfCnpj(generateRandomNumericString());
+        user.setCpfCnpj(generateRandomNumericString(11));
         user.setEmail(email);
         user.setName(name);
-        user.setPassword(generateRandomNumericString());
+        user.setPassword(generateRandomNumericString(11));
         user.setRole(User.Role.USER);
         return user;
     }
 
-    public static String generateRandomNumericString() {
-        Random random = new Random();
-        int length = random.nextBoolean() ? 11 : 14;
+    public static User createAsShopkeeper(String name, String email) {
+        var user = new User();
+        user.setCpfCnpj(generateRandomNumericString(14));
+        user.setEmail(email);
+        user.setName(name);
+        user.setPassword(generateRandomNumericString(14));
+        user.setRole(User.Role.SHOPKEEPER);
+        return user;
+    }
 
+    public static String generateRandomNumericString(int length) {
+        Random random = new Random();
         StringBuilder randomString = new StringBuilder();
         for (int i = 0; i < length; i++) {
             int digit = random.nextInt(10);

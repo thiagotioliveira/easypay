@@ -40,7 +40,12 @@ public class Transfer {
     private BigDecimal amount;
 
     @AssertTrue
-    private boolean isValid() {
+    private boolean hasDifferentWallets() {
         return Boolean.FALSE.equals(this.walletFrom.equals(this.walletTo));
+    }
+
+    @AssertTrue
+    private boolean isWalletFromUserAsUser() {
+        return this.walletFrom.getUser().isUser();
     }
 }
