@@ -27,12 +27,12 @@ public class CreateTransferDTO {
     @Positive
     private BigDecimal amount;
 
-    @AssertTrue
+    @AssertTrue(message = "there must be different users")
     private boolean hasDifferentUsers() {
         return Boolean.FALSE.equals(this.userFrom.equals(this.userTo));
     }
 
-    @AssertTrue
+    @AssertTrue(message = "the payer must be a user")
     private boolean isUserFromAsUser() {
         return this.userFrom.isUser();
     }
