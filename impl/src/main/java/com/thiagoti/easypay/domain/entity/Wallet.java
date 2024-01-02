@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -29,4 +30,7 @@ public class Wallet {
     @PositiveOrZero
     @Column(nullable = false)
     private BigDecimal amount;
+
+    @Version
+    private Long version;
 }
