@@ -26,8 +26,8 @@ class MovementServiceImpl implements MovementService {
         if (movement.isDebit()) {
             if (movement.getAmount().compareTo(movement.getWallet().getAmount()) > 0) {
                 throw new BusinessRuleException(
-                        "insufficient funds for wallet '%s'",
-                        movement.getWallet().getId());
+                        "insufficient funds for user '%s'",
+                        movement.getWallet().getUser().getId());
             }
             walletService.update(
                     movement.getWallet().getId(),

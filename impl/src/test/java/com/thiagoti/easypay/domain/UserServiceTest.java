@@ -24,6 +24,9 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private WalletService walletService;
+
     private UserMapper userMapper;
 
     private UserService userService;
@@ -31,7 +34,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         this.userMapper = new UserMapperImpl();
-        this.userService = new UserServiceImpl(userMapper, userRepository);
+        this.userService = new UserServiceImpl(walletService, userMapper, userRepository);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.thiagoti.easypay.domain;
 
+import com.thiagoti.easypay.domain.dto.CreateWalletDTO;
 import com.thiagoti.easypay.domain.dto.WalletDTO;
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -12,4 +13,6 @@ public interface WalletService {
     WalletDTO update(UUID id, BigDecimal amount);
 
     Optional<WalletDTO> getByUser(UUID userId);
+
+    WalletDTO create(CreateWalletDTO createWalletDTO);
 }

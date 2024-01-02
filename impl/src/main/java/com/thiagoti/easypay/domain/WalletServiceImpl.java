@@ -1,8 +1,10 @@
 package com.thiagoti.easypay.domain;
 
+import com.thiagoti.easypay.domain.dto.CreateWalletDTO;
 import com.thiagoti.easypay.domain.dto.WalletDTO;
 import com.thiagoti.easypay.domain.entity.Wallet;
 import com.thiagoti.easypay.domain.exception.BusinessRuleException;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,5 +33,10 @@ class WalletServiceImpl implements WalletService {
     @Override
     public Optional<WalletDTO> getByUser(UUID userId) {
         return repository.findByUserId(userId).map(mapper::toDTO);
+    }
+
+    @Override
+    public WalletDTO create(@Valid CreateWalletDTO createWalletDTO) {
+        return mapper.toDTO(repository.save(mapper.toEntity(createWalletDTO)));
     }
 }

@@ -17,9 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @Import({WalletServiceImpl.class, WalletMapperImpl.class, UserServiceImpl.class, UserMapperImpl.class})
+@ActiveProfiles("test")
 class WalletServiceTest {
 
     @Autowired
@@ -44,7 +46,7 @@ class WalletServiceTest {
 
         WalletDTO walletDTO = walletOptional.get();
         assertNotNull(walletDTO.getId());
-        assertEquals(wallet.getUser().getId(), walletDTO.getUserId());
+        assertEquals(wallet.getUser().getId(), walletDTO.getUser().getId());
         assertEquals(wallet.getAmount(), walletDTO.getAmount());
     }
 

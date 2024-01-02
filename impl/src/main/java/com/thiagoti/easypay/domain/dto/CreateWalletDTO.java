@@ -1,7 +1,8 @@
 package com.thiagoti.easypay.domain.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +15,11 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @ToString
-public class WalletDTO {
+public class CreateWalletDTO {
 
-    private UUID id;
-
+    @NotNull
     private UserDTO user;
 
+    @PositiveOrZero
     private BigDecimal amount;
 }

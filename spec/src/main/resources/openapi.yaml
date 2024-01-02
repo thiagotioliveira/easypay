@@ -1,0 +1,94 @@
+openapi: "3.0.2"
+info:
+  title: EasyPay API
+  description: EasyPay API
+  version: "0.0.1"
+  contact:
+    name: API Support
+    email: thiago@thiagoti.com
+servers:
+  - url: https://localhost:8080
+
+tags:
+  - name: Transfers
+    description: All related actions to Transfer
+
+paths:
+  /v1/transfers:
+    post:
+      summary: create a new transfer
+      operationId: createTransfer
+      tags:
+        - Transfers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransferRequestBody"
+      responses:
+        "201":
+          description: successfully created
+        "400":
+          description: not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        details:
+          type: array     
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+        message:
+          type: string
+        path:
+          type: string
+    ErrorDetail:
+      type: object
+      properties:
+        field: 
+          type: string
+        messages:
+          type: array
+          items:
+           type: string
+    CreateTransferRequestBody:
+      type: object
+      required:
+        - value
+        - payer
+        - payee
+      properties:
+        value:
+          type: number
+          format: double
+        payer:
+          type: string
+          format: uuid
+        payee:
+          type: string
+          format: uuid
