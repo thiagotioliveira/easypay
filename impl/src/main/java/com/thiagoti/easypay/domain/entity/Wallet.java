@@ -32,5 +32,5 @@ public class Wallet {
     private BigDecimal amount;
 
     @Version
-    private Long version;
+    private int version;
 }

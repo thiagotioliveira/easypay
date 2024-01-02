@@ -1,6 +1,6 @@
 package com.thiagoti.easypay.domain;
 
-import com.thiagoti.easypay.domain.annotation.SendNotification;
+import com.thiagoti.easypay.domain.annotation.PublishResult;
 import com.thiagoti.easypay.domain.dto.CreateMovementDTO;
 import com.thiagoti.easypay.domain.dto.CreateTransferDTO;
 import com.thiagoti.easypay.domain.dto.MovementDTO;
@@ -24,7 +24,7 @@ class TransferServiceImpl implements TransferService {
 
     @Override
     @Transactional
-    @SendNotification
+    @PublishResult
     public TransferDTO create(@Valid CreateTransferDTO createTransferDTO) {
         transferAuthorizerService.authorize();
 

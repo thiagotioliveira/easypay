@@ -5,6 +5,7 @@ import static com.thiagoti.easypay.domain.mock.UserMock.USER_EMAIL;
 import static com.thiagoti.easypay.domain.mock.UserMock.USER_NAME;
 import static com.thiagoti.easypay.domain.mock.UserMock.createAsUser;
 import static com.thiagoti.easypay.domain.mock.WalletMock.createWallet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,9 +40,21 @@ class WalletRepositoryTest {
 
     @Test
     void shouldSave() {
-        var wallet = createWallet(user, BigDecimal.TEN);
-        var wallet1Saved = walletRepository.save(wallet);
-        assertNotNull(wallet1Saved.getId());
+        var wallet = walletRepository.save(createWallet(user, BigDecimal.TEN));
+        assertNotNull(wallet.getId());
+    }
+
+    @Test
+    void shouldUpdate() {
+        var wallet = walletRepository.save(createWallet(user, BigDecimal.TEN));
+        em.flush();
+        assertEquals(0, wallet.getVersion());
+
+        wallet = walletRepository.findById(wallet.getId()).orElseThrow();
+        wallet.setAmount(BigDecimal.ONE);
+        wallet = walletRepository.save(wallet);
+        em.flush();
+        assertEquals(1, wallet.getVersion());
     }
 
     @Test

@@ -1,7 +1,16 @@
 logging:
   level:
     root: ERROR
-    com.thiagoti.easypay: DEBUG
+    #org.hibernate.orm.jdbc.bind: TRACE
+    com.thiagoti.easypay: INFO
+
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
 app:
   external:
     transfer-authorizer:
