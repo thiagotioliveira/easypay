@@ -7,9 +7,7 @@ import com.thiagoti.easypay.domain.dto.MovementDTO;
 import com.thiagoti.easypay.domain.dto.TransferDTO;
 import com.thiagoti.easypay.domain.entity.Movement.Type;
 import com.thiagoti.easypay.domain.exception.BusinessRuleException;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
-import java.util.Set;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 class TransferServiceImpl implements TransferService {
 
-    private final Validator validator;
     private final TransferAuthorizerService transferAuthorizerService;
     private final TransferMapper mapper;
     private final TransferRepository repository;
@@ -28,14 +25,8 @@ class TransferServiceImpl implements TransferService {
     @Override
     @Transactional
     @SendNotification
-    public TransferDTO create(CreateTransferDTO createTransferDTO) {
+    public TransferDTO create(@Valid CreateTransferDTO createTransferDTO) {
         transferAuthorizerService.authorize();
-
-        Set<ConstraintViolation<CreateTransferDTO>> constraints = validator.validate(createTransferDTO);
-
-        if (Boolean.FALSE.equals(constraints.isEmpty())) {
-            throw new BusinessRuleException("invalid transfer.");
-        }
 
         MovementDTO movementDebitDTO = movementService.create(CreateMovementDTO.builder()
                 .amount(createTransferDTO.getAmount())

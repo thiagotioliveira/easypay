@@ -4,10 +4,8 @@ import com.thiagoti.easypay.domain.dto.CreateMovementDTO;
 import com.thiagoti.easypay.domain.dto.MovementDTO;
 import com.thiagoti.easypay.domain.exception.BusinessRuleException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
+import jakarta.validation.Valid;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,20 +14,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 class MovementServiceImpl implements MovementService {
 
-    private final Validator validator;
     private final MovementMapper mapper;
     private final MovementRepository repository;
     private final WalletService walletService;
 
     @Override
     @Transactional
-    public MovementDTO create(CreateMovementDTO dto) {
-        Set<ConstraintViolation<CreateMovementDTO>> constraints = validator.validate(dto);
-
-        if (Boolean.FALSE.equals(constraints.isEmpty())) {
-            throw new BusinessRuleException("invalid movement.");
-        }
-
+    public MovementDTO create(@Valid CreateMovementDTO dto) {
         final var movement = mapper.toEntity(dto);
 
         if (movement.isDebit()) {
