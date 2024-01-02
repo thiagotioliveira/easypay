@@ -1,9 +1,11 @@
 package com.thiagoti.easypay.domain;
 
 import com.thiagoti.easypay.domain.annotation.SendNotification;
+import com.thiagoti.easypay.domain.dto.CreateMovementDTO;
 import com.thiagoti.easypay.domain.dto.CreateTransferDTO;
+import com.thiagoti.easypay.domain.dto.MovementDTO;
 import com.thiagoti.easypay.domain.dto.TransferDTO;
-import com.thiagoti.easypay.domain.entity.Transfer;
+import com.thiagoti.easypay.domain.entity.Movement.Type;
 import com.thiagoti.easypay.domain.exception.BusinessRuleException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -20,6 +22,7 @@ class TransferServiceImpl implements TransferService {
     private final TransferAuthorizerService transferAuthorizerService;
     private final TransferMapper mapper;
     private final TransferRepository repository;
+    private final MovementService movementService;
     private final WalletService walletService;
 
     @Override
@@ -28,23 +31,35 @@ class TransferServiceImpl implements TransferService {
     public TransferDTO create(CreateTransferDTO createTransferDTO) {
         transferAuthorizerService.authorize();
 
-        final var transfer = mapper.toEntity(createTransferDTO);
-        if (transfer.getAmount().compareTo(transfer.getWalletFrom().getAmount()) > 0) {
-            throw new BusinessRuleException("insufficient funds.");
-        }
-
-        Set<ConstraintViolation<Transfer>> constraints = validator.validate(transfer);
+        Set<ConstraintViolation<CreateTransferDTO>> constraints = validator.validate(createTransferDTO);
 
         if (Boolean.FALSE.equals(constraints.isEmpty())) {
             throw new BusinessRuleException("invalid transfer.");
         }
 
-        walletService.update(
-                transfer.getWalletFrom().getId(),
-                transfer.getWalletFrom().getAmount().subtract(transfer.getAmount()));
-        walletService.update(
-                transfer.getWalletTo().getId(),
-                transfer.getWalletTo().getAmount().add(transfer.getAmount()));
-        return mapper.toDTO(repository.save(transfer));
+        MovementDTO movementDebitDTO = movementService.create(CreateMovementDTO.builder()
+                .amount(createTransferDTO.getAmount())
+                .type(Type.DEBIT)
+                .walletId(walletService
+                        .getByUser(createTransferDTO.getUserFrom().getId())
+                        .orElseThrow(() -> new BusinessRuleException(
+                                "wallet for user '%s' not found.",
+                                createTransferDTO.getUserFrom().getId()))
+                        .getId())
+                .build());
+
+        MovementDTO movementCreditDTO = movementService.create(CreateMovementDTO.builder()
+                .amount(createTransferDTO.getAmount())
+                .type(Type.CREDIT)
+                .walletId(walletService
+                        .getByUser(createTransferDTO.getUserTo().getId())
+                        .orElseThrow(() -> new BusinessRuleException(
+                                "wallet for user '%s' not found.",
+                                createTransferDTO.getUserTo().getId()))
+                        .getId())
+                .build());
+
+        return mapper.toDTO(repository.save(
+                mapper.toEntity(createTransferDTO, movementDebitDTO.getId(), movementCreditDTO.getId())));
     }
 }

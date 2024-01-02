@@ -5,6 +5,8 @@ import static com.thiagoti.easypay.domain.mock.WalletMock.createWallet;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.thiagoti.easypay.domain.entity.Movement;
+import com.thiagoti.easypay.domain.entity.Movement.Type;
 import com.thiagoti.easypay.domain.entity.Transfer;
 import com.thiagoti.easypay.domain.entity.Wallet;
 import jakarta.persistence.EntityManager;
@@ -29,6 +31,9 @@ class TransferRepositoryTest {
     private TransferRepository transferRepository;
 
     @Autowired
+    private MovementRepository movementRepository;
+
+    @Autowired
     private EntityManager em;
 
     private Wallet wallet1;
@@ -49,11 +54,27 @@ class TransferRepositoryTest {
 
     @Test
     void shouldMakeTransfer() {
+        final var amount = BigDecimal.TEN;
+        final var createdAt = OffsetDateTime.now();
+        var movementDebit = new Movement();
+        movementDebit.setAmount(amount);
+        movementDebit.setCreatedAt(createdAt);
+        movementDebit.setType(Type.DEBIT);
+        movementDebit.setWallet(wallet1);
+        movementDebit = movementRepository.save(movementDebit);
+
+        var movementCredit = new Movement();
+        movementCredit.setAmount(amount);
+        movementCredit.setCreatedAt(createdAt);
+        movementCredit.setType(Type.CREDIT);
+        movementCredit.setWallet(wallet2);
+        movementCredit = movementRepository.save(movementCredit);
+
         var transfer = new Transfer();
-        transfer.setCreatedAt(OffsetDateTime.now());
-        transfer.setWalletFrom(wallet1);
-        transfer.setWalletTo(wallet2);
-        transfer.setAmount(BigDecimal.TEN);
+        transfer.setCreatedAt(createdAt);
+        transfer.setAmount(amount);
+        transfer.setMovementDebit(movementDebit);
+        transfer.setMovementCredit(movementCredit);
         var transferSaved = transferRepository.save(transfer);
         em.flush();
         assertNotNull(transferSaved.getId());
@@ -61,11 +82,20 @@ class TransferRepositoryTest {
 
     @Test
     void shouldThrowExceptionBecauseInvalidTransfer() {
+        final var amount = BigDecimal.TEN;
+        final var createdAt = OffsetDateTime.now();
+        var movementDebit = new Movement();
+        movementDebit.setAmount(amount);
+        movementDebit.setCreatedAt(createdAt);
+        movementDebit.setType(Type.DEBIT);
+        movementDebit.setWallet(wallet1);
+        movementDebit = movementRepository.save(movementDebit);
+
         var transfer = new Transfer();
-        transfer.setCreatedAt(OffsetDateTime.now());
-        transfer.setWalletFrom(wallet1);
-        transfer.setWalletTo(wallet1);
-        transfer.setAmount(BigDecimal.TEN);
+        transfer.setCreatedAt(createdAt);
+        transfer.setAmount(amount);
+        transfer.setMovementDebit(movementDebit);
+        transfer.setMovementCredit(movementDebit);
         assertThrows(ConstraintViolationException.class, () -> {
             transferRepository.save(transfer);
             em.flush();

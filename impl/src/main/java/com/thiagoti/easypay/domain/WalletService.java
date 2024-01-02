@@ -10,4 +10,6 @@ public interface WalletService {
     Optional<WalletDTO> getById(UUID id);
 
     WalletDTO update(UUID id, BigDecimal amount);
+
+    Optional<WalletDTO> getByUser(UUID userId);
 }

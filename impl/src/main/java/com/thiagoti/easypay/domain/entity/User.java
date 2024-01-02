@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -31,15 +32,12 @@ public class User {
     private String email;
 
     @Column(length = 50)
+    @ToString.Exclude
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     private Role role;
-
-    public boolean isUser() {
-        return Role.USER.equals(this.role);
-    }
 
     public enum Role {
         USER,

@@ -1,5 +1,6 @@
 package com.thiagoti.easypay.domain.dto;
 
+import com.thiagoti.easypay.domain.entity.Movement.Type;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -15,15 +16,15 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @ToString
-public class TransferDTO {
+public class MovementDTO {
 
     private UUID id;
 
     private OffsetDateTime createdAt;
 
-    private UUID movementDebitId;
+    private UUID walletId;
 
-    private UUID movementCreditId;
+    private Type type;
 
     private BigDecimal amount;
 }

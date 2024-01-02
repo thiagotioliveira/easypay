@@ -1,9 +1,9 @@
 package com.thiagoti.easypay.domain.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,11 +19,21 @@ import lombok.ToString;
 public class CreateTransferDTO {
 
     @NotNull
-    private UUID walletFromId;
+    private UserDTO userFrom;
 
     @NotNull
-    private UUID walletToId;
+    private UserDTO userTo;
 
     @Positive
     private BigDecimal amount;
+
+    @AssertTrue
+    private boolean hasDifferentUsers() {
+        return Boolean.FALSE.equals(this.userFrom.equals(this.userTo));
+    }
+
+    @AssertTrue
+    private boolean isUserFromAsUser() {
+        return this.userFrom.isUser();
+    }
 }

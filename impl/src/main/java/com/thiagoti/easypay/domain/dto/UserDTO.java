@@ -25,6 +25,10 @@ public class UserDTO {
 
     private Role role;
 
+    public boolean isUser() {
+        return Role.USER.equals(this.role);
+    }
+
     public enum Role {
         USER,
         SHOPKEEPER

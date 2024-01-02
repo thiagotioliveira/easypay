@@ -6,6 +6,7 @@ import static com.thiagoti.easypay.domain.mock.UserMock.createAsShopkeeper;
 import static com.thiagoti.easypay.domain.mock.UserMock.createAsUser;
 import static com.thiagoti.easypay.domain.mock.WalletMock.createWallet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 import com.thiagoti.easypay.domain.dto.CreateTransferDTO;
 import com.thiagoti.easypay.domain.dto.TransferDTO;
+import com.thiagoti.easypay.domain.entity.User;
 import com.thiagoti.easypay.domain.entity.Wallet;
 import com.thiagoti.easypay.domain.exception.BusinessRuleException;
 import com.thiagoti.easypay.external.TransferAuthorizerClient;
@@ -36,6 +38,9 @@ class TransferServiceTest {
     private WalletRepository walletRepository;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -44,26 +49,33 @@ class TransferServiceTest {
     @Autowired
     private TransferRepository transferRepository;
 
+    @Autowired
+    private MovementRepository movementRepository;
+
     @MockBean
     private TransferAuthorizerClient transferAuthorizerClient;
 
     @SpyBean
     private WalletService walletService;
 
-    private Wallet wallet1;
-    private Wallet wallet2;
+    private Wallet walletUser;
+    private Wallet walletShopkeeper;
+
+    private User userAsUser;
+    private User userAsShopkeeper;
 
     @BeforeEach
     void setUp() throws Exception {
         transferRepository.deleteAll();
+        movementRepository.deleteAll();
         walletRepository.deleteAll();
         userRepository.deleteAll();
 
-        var user1 = userRepository.save(createAsUser(USER_NAME + "1", USER_EMAIL + "1"));
-        var user2 = userRepository.save(createAsShopkeeper(USER_NAME + "2", USER_EMAIL + "2"));
+        userAsUser = userRepository.save(createAsUser(USER_NAME + "1", USER_EMAIL + "1"));
+        userAsShopkeeper = userRepository.save(createAsShopkeeper(USER_NAME + "2", USER_EMAIL + "2"));
 
-        wallet1 = walletRepository.save(createWallet(user1, BigDecimal.TEN));
-        wallet2 = walletRepository.save(createWallet(user2, BigDecimal.TEN));
+        walletUser = walletRepository.save(createWallet(userAsUser, BigDecimal.TEN));
+        walletShopkeeper = walletRepository.save(createWallet(userAsShopkeeper, BigDecimal.TEN));
 
         when(transferAuthorizerClient.get())
                 .thenReturn(TransferAuthorizerStatusDTO.builder()
@@ -75,45 +87,54 @@ class TransferServiceTest {
     void shouldMakeTransfer() {
         TransferDTO transferDTO = transferService.create(CreateTransferDTO.builder()
                 .amount(BigDecimal.TEN)
-                .walletFromId(wallet1.getId())
-                .walletToId(wallet2.getId())
+                .userFrom(userMapper.toDTO(userAsUser))
+                .userTo(userMapper.toDTO(userAsShopkeeper))
                 .build());
 
         assertNotNull(transferDTO);
         assertEquals(BigDecimal.TEN, transferDTO.getAmount());
-        assertEquals(wallet1.getId(), transferDTO.getWalletFromId());
-        assertEquals(wallet2.getId(), transferDTO.getWalletToId());
+        assertNotNull(transferDTO.getMovementDebitId());
+        assertNotNull(transferDTO.getMovementCreditId());
+        assertNotEquals(transferDTO.getMovementDebitId(), transferDTO.getMovementCreditId());
 
         assertEquals(
                 new BigDecimal("0.00"),
-                walletRepository.findById(wallet1.getId()).orElseThrow().getAmount());
+                walletRepository.findById(walletUser.getId()).orElseThrow().getAmount());
         assertEquals(
                 new BigDecimal("20.00"),
-                walletRepository.findById(wallet2.getId()).orElseThrow().getAmount());
+                walletRepository
+                        .findById(walletShopkeeper.getId())
+                        .orElseThrow()
+                        .getAmount());
     }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
     void shouldThowExceptionBecauseValidationError() {
         var wallet1Amount =
-                walletRepository.findById(wallet1.getId()).orElseThrow().getAmount();
-        var wallet2Amount =
-                walletRepository.findById(wallet2.getId()).orElseThrow().getAmount();
+                walletRepository.findById(walletUser.getId()).orElseThrow().getAmount();
+        var wallet2Amount = walletRepository
+                .findById(walletShopkeeper.getId())
+                .orElseThrow()
+                .getAmount();
 
         assertThrows(BusinessRuleException.class, () -> {
             transferService.create(CreateTransferDTO.builder()
                     .amount(BigDecimal.TEN)
-                    .walletFromId(wallet2.getId())
-                    .walletToId(wallet1.getId())
+                    .userFrom(userMapper.toDTO(userAsShopkeeper))
+                    .userTo(userMapper.toDTO(userAsUser))
                     .build());
         });
 
         assertEquals(
                 wallet1Amount,
-                walletRepository.findById(wallet1.getId()).orElseThrow().getAmount());
+                walletRepository.findById(walletUser.getId()).orElseThrow().getAmount());
         assertEquals(
                 wallet2Amount,
-                walletRepository.findById(wallet2.getId()).orElseThrow().getAmount());
+                walletRepository
+                        .findById(walletShopkeeper.getId())
+                        .orElseThrow()
+                        .getAmount());
         assertEquals(0, transferRepository.findAll().size());
     }
 
@@ -121,26 +142,31 @@ class TransferServiceTest {
     @Transactional(propagation = Propagation.NEVER)
     void shouldThowExceptionBecauseErrorTransfer() {
         var wallet1Amount =
-                walletRepository.findById(wallet1.getId()).orElseThrow().getAmount();
-        var wallet2Amount =
-                walletRepository.findById(wallet2.getId()).orElseThrow().getAmount();
+                walletRepository.findById(walletUser.getId()).orElseThrow().getAmount();
+        var wallet2Amount = walletRepository
+                .findById(walletShopkeeper.getId())
+                .orElseThrow()
+                .getAmount();
 
-        doThrow(RuntimeException.class).when(walletService).update(eq(wallet2.getId()), any());
+        doThrow(RuntimeException.class).when(walletService).update(eq(walletShopkeeper.getId()), any());
 
         assertThrows(RuntimeException.class, () -> {
             transferService.create(CreateTransferDTO.builder()
                     .amount(BigDecimal.TEN)
-                    .walletFromId(wallet1.getId())
-                    .walletToId(wallet2.getId())
+                    .userFrom(userMapper.toDTO(userAsShopkeeper))
+                    .userTo(userMapper.toDTO(userAsUser))
                     .build());
         });
 
         assertEquals(
                 wallet1Amount,
-                walletRepository.findById(wallet1.getId()).orElseThrow().getAmount());
+                walletRepository.findById(walletUser.getId()).orElseThrow().getAmount());
         assertEquals(
                 wallet2Amount,
-                walletRepository.findById(wallet2.getId()).orElseThrow().getAmount());
+                walletRepository
+                        .findById(walletShopkeeper.getId())
+                        .orElseThrow()
+                        .getAmount());
         assertEquals(0, transferRepository.findAll().size());
     }
 
@@ -149,8 +175,8 @@ class TransferServiceTest {
         assertThrows(BusinessRuleException.class, () -> {
             transferService.create(CreateTransferDTO.builder()
                     .amount(new BigDecimal("20"))
-                    .walletFromId(wallet1.getId())
-                    .walletToId(wallet2.getId())
+                    .userFrom(userMapper.toDTO(userAsShopkeeper))
+                    .userTo(userMapper.toDTO(userAsUser))
                     .build());
         });
     }

@@ -27,4 +27,9 @@ class WalletServiceImpl implements WalletService {
         wallet.setAmount(amount);
         return mapper.toDTO(repository.save(wallet));
     }
+
+    @Override
+    public Optional<WalletDTO> getByUser(UUID userId) {
+        return repository.findByUserId(userId).map(mapper::toDTO);
+    }
 }

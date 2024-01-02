@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -17,7 +16,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Transfer {
+public class Movement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,19 +27,22 @@ public class Transfer {
     private OffsetDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "movement_credit_id")
-    private Movement movementCredit;
+    @JoinColumn(nullable = false, name = "wallet_id")
+    private Wallet wallet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "movement_debit_id")
-    private Movement movementDebit;
+    @Column(nullable = false, length = 6)
+    private Type type;
 
     @Positive
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @AssertTrue
-    private boolean isValid() {
-        return Boolean.FALSE.equals(this.movementCredit.equals(this.movementDebit));
+    public boolean isDebit() {
+        return Type.DEBIT.equals(this.type);
+    }
+
+    public enum Type {
+        CREDIT,
+        DEBIT;
     }
 }

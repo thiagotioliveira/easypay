@@ -1,7 +1,9 @@
 package com.thiagoti.easypay.domain.dto;
 
+import com.thiagoti.easypay.domain.entity.Movement.Type;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,15 +17,15 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @ToString
-public class TransferDTO {
+public class CreateMovementDTO {
 
-    private UUID id;
+    @NotNull
+    private UUID walletId;
 
-    private OffsetDateTime createdAt;
+    @NotNull
+    private Type type;
 
-    private UUID movementDebitId;
-
-    private UUID movementCreditId;
-
+    @NotNull
+    @Positive
     private BigDecimal amount;
 }
