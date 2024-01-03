@@ -1,8 +1,8 @@
 package com.thiagoti.easypay;
 
-import com.thiagoti.easypay.domain.UserService;
-import com.thiagoti.easypay.domain.dto.CreateUserDTO;
-import com.thiagoti.easypay.domain.entity.User.Role;
+import com.thiagoti.easypay.model.CreateUserDTO;
+import com.thiagoti.easypay.model.entity.User.Role;
+import com.thiagoti.easypay.user.UserService;
 import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

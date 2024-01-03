@@ -1,6 +1,6 @@
 package com.thiagoti.easypay.external;
 
-import com.thiagoti.easypay.external.dto.TransferAuthorizerStatusDTO;
+import com.thiagoti.easypay.external.model.TransferAuthorizerStatusDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 

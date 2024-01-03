@@ -21,8 +21,8 @@
       <swagger-annotations.v3.version>2.2.8</swagger-annotations.v3.version>
       <jackson-databind-nullable.version>0.2.4</jackson-databind-nullable.version>
       <openapi-generator-maven-plugin.version>6.4.0</openapi-generator-maven-plugin.version>
-      <codegen.api.package.name>com.thiagoti.easypay.spec.api</codegen.api.package.name>
-      <codegen.api.dto.package.name>com.thiagoti.easypay.spec.api.dto</codegen.api.dto.package.name>
+      <codegen.api.package.name>com.thiagoti.easypay.api</codegen.api.package.name>
+      <codegen.api.dto.package.name>com.thiagoti.easypay.api.model</codegen.api.dto.package.name>
    </properties>
    <dependencies>
       <dependency>

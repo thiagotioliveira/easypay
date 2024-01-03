@@ -5,7 +5,7 @@ logging:
   level:
     root: ERROR
     #org.hibernate.orm.jdbc.bind: TRACE
-    com.thiagoti.easypay: INFO
+    com.thiagoti.easypay: DEBUG
 
 spring:
   h2:
