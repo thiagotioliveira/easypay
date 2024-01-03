@@ -1,5 +1,6 @@
 package com.thiagoti.easypay.model;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
@@ -21,5 +22,6 @@ public class CreateWalletDTO {
     private UserDTO user;
 
     @PositiveOrZero
+    @Digits(fraction = 2, integer = Integer.MAX_VALUE)
     private BigDecimal amount;
 }

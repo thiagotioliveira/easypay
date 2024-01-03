@@ -1,6 +1,7 @@
 package com.thiagoti.easypay.model;
 
 import com.thiagoti.easypay.model.entity.Movement.Type;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -27,5 +28,6 @@ public class CreateMovementDTO {
 
     @NotNull
     @Positive
+    @Digits(fraction = 2, integer = Integer.MAX_VALUE)
     private BigDecimal amount;
 }

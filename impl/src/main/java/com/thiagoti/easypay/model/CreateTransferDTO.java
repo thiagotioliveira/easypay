@@ -1,6 +1,7 @@
 package com.thiagoti.easypay.model;
 
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class CreateTransferDTO {
     private UserDTO userTo;
 
     @Positive
+    @Digits(fraction = 2, integer = Integer.MAX_VALUE)
     private BigDecimal amount;
 
     @AssertTrue(message = "there must be different users")

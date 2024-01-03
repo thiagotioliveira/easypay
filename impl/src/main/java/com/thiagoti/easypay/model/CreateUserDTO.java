@@ -1,6 +1,7 @@
 package com.thiagoti.easypay.model;
 
 import com.thiagoti.easypay.model.entity.User.Role;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -44,5 +45,6 @@ public class CreateUserDTO {
     private Role role;
 
     @PositiveOrZero
+    @Digits(fraction = 2, integer = Integer.MAX_VALUE)
     private BigDecimal amount;
 }
