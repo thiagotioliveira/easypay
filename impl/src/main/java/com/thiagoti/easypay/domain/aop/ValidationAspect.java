@@ -22,7 +22,7 @@ public class ValidationAspect {
 
     private final Validator validator;
 
-    @Before("execution(* com.thiagoti.easypay..*.*(.., @jakarta.validation.Valid (*), ..))")
+    @Before("execution(* com.thiagoti.easypay.domain..*.*(.., @jakarta.validation.Valid (*), ..))")
     public void validate(JoinPoint joinPoint) throws Exception {
         Object[] args = joinPoint.getArgs();
 
