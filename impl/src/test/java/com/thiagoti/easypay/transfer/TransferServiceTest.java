@@ -2,7 +2,7 @@ package com.thiagoti.easypay.transfer;
 
 import static com.thiagoti.easypay.mock.UserMock.USER_EMAIL;
 import static com.thiagoti.easypay.mock.UserMock.USER_NAME;
-import static com.thiagoti.easypay.mock.UserMock.createAsShopkeeper;
+import static com.thiagoti.easypay.mock.UserMock.createAsMerchant;
 import static com.thiagoti.easypay.mock.UserMock.createAsUser;
 import static com.thiagoti.easypay.mock.WalletMock.createWallet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,7 +79,7 @@ class TransferServiceTest {
         userRepository.deleteAll();
 
         userAsUser = userRepository.save(createAsUser(USER_NAME + "1", USER_EMAIL + "1"));
-        userAsShopkeeper = userRepository.save(createAsShopkeeper(USER_NAME + "2", USER_EMAIL + "2"));
+        userAsShopkeeper = userRepository.save(createAsMerchant(USER_NAME + "2", USER_EMAIL + "2"));
 
         walletUser = walletRepository.save(createWallet(userAsUser, BigDecimal.TEN));
         walletShopkeeper = walletRepository.save(createWallet(userAsShopkeeper, BigDecimal.TEN));

@@ -33,6 +33,6 @@ public class UserDTO {
 
     public enum Role {
         USER,
-        SHOPKEEPER
+        MERCHANT
     }
 }

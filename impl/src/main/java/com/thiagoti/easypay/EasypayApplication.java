@@ -54,15 +54,15 @@ public class EasypayApplication {
                     .role(Role.USER)
                     .build());
 
-            var shopkeeper = userService.create(CreateUserDTO.builder()
+            var merchant1 = userService.create(CreateUserDTO.builder()
                     .amount(new BigDecimal("100"))
                     .cpfCnpj("82418791000139")
                     .email("company@email.test")
                     .name("Shop Store")
                     .password("somepass")
-                    .role(Role.SHOPKEEPER)
+                    .role(Role.MERCHANT)
                     .build());
-            log.info("---Registered User---\nUser1: {}\nUser2: {}\nUser3: {}", user1, user2, shopkeeper);
+            log.info("---Registered User---\nUser1: {}\nUser2: {}\nMerchant1: {}", user1, user2, merchant1);
         };
     }
 }

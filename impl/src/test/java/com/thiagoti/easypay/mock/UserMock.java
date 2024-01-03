@@ -28,13 +28,13 @@ public class UserMock {
         return user;
     }
 
-    public static User createAsShopkeeper(String name, String email) {
+    public static User createAsMerchant(String name, String email) {
         var user = new User();
         user.setCpfCnpj(generateRandomNumericString(14));
         user.setEmail(email);
         user.setName(name);
         user.setPassword(generateRandomNumericString(14));
-        user.setRole(User.Role.SHOPKEEPER);
+        user.setRole(User.Role.MERCHANT);
         return user;
     }
 
