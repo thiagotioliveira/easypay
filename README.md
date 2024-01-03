@@ -19,3 +19,14 @@ Requirements:
 * Upon receiving payment, the user or merchant needs to receive a notification (email, SMS) sent by a third-party service, and this service may occasionally be unavailable/unstable. [Use this mock to simulate the sending](https://run.mocky.io/v3/54dc2cf1-3add-45b5-b5a9-6bf7e7f1f4a6).
 
 * This service should be RESTful.
+
+## Build project
+```
+mvn clean install
+```
+
+## Run project
+```
+cd .\impl\
+mvn spring-boot:run
+```
