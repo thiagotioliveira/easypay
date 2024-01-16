@@ -20,9 +20,9 @@ class GlobalExceptionHandler {
     public ResponseEntity<Error> handleBusinessRuleException(BusinessRuleException ex, HttpServletRequest request) {
         var error = new Error();
         error.setMessage(ex.getMessage());
-        error.setStatus(400);
+        error.setStatus(ex.getStatus().value());
         error.setTimestamp(OffsetDateTime.now());
-        error.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        error.setError(ex.getStatus().getReasonPhrase());
         error.setPath(getPathFromRequest(request));
         if (Boolean.FALSE.equals(ex.getConstraints().isEmpty())) {
             ex.getConstraints().forEach(c -> {
