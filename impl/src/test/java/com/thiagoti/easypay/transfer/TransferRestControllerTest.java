@@ -45,6 +45,7 @@ class TransferRestControllerTest {
 
     private UserDTO payer;
     private UserDTO payee;
+    private UserDTO merchant;
 
     @BeforeAll
     void setUp() throws Exception {
@@ -64,6 +65,15 @@ class TransferRestControllerTest {
                 .name("Mock Payee")
                 .password("mock-payee")
                 .role(Role.USER)
+                .build());
+
+        this.merchant = userService.create(CreateUserDTO.builder()
+                .amount(BigDecimal.TEN)
+                .cpfCnpj("99999999999999")
+                .email("mock-merchant@test.test")
+                .name("Mock Merchant")
+                .password("mock-merchant")
+                .role(Role.MERCHANT)
                 .build());
     }
 
@@ -102,7 +112,7 @@ class TransferRestControllerTest {
     }
 
     @Test
-    void testTransferDone() throws Exception {
+    void testTransferBetweenUsersDone() throws Exception {
         final CreateTransferRequestBody body = new CreateTransferRequestBody();
         body.setPayee(payee.getId());
         body.setPayer(payer.getId());
@@ -146,5 +156,34 @@ class TransferRestControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(
                         jsonPath("$.message").value(String.format("insufficient funds for user '%s'", payer.getId())));
+    }
+
+    @Test
+    void testTransferFromMerchant() throws Exception {
+        final CreateTransferRequestBody body = new CreateTransferRequestBody();
+        body.setPayee(payee.getId());
+        body.setPayer(merchant.getId());
+        body.setValue(1d);
+
+        mockMvc.perform(post("/v1/transfers")
+                        .content(objectMapper.writeValueAsString(body))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("invalid operation."));
+    }
+
+    @Test
+    void testTransferWithMerchantDone() throws Exception {
+        final CreateTransferRequestBody body = new CreateTransferRequestBody();
+        body.setPayee(merchant.getId());
+        body.setPayer(payer.getId());
+        body.setValue(1d);
+
+        mockMvc.perform(post("/v1/transfers")
+                        .content(objectMapper.writeValueAsString(body))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
     }
 }
