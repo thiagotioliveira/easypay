@@ -9,6 +9,7 @@ import com.thiagoti.easypay.user.UserService;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,12 +25,12 @@ public class TransferRestController implements TransfersApi {
     public ResponseEntity<Void> createTransfer(@Valid CreateTransferRequestBody createTransferRequestBody) {
         var payer = userService
                 .getById(createTransferRequestBody.getPayer())
-                .orElseThrow(
-                        () -> new BusinessRuleException("user '%s' not found.", createTransferRequestBody.getPayer()));
+                .orElseThrow(() -> new BusinessRuleException(
+                        HttpStatus.NOT_FOUND, "user '%s' not found.", createTransferRequestBody.getPayer()));
         var payee = userService
                 .getById(createTransferRequestBody.getPayee())
-                .orElseThrow(
-                        () -> new BusinessRuleException("user '%s' not found.", createTransferRequestBody.getPayee()));
+                .orElseThrow(() -> new BusinessRuleException(
+                        HttpStatus.NOT_FOUND, "user '%s' not found.", createTransferRequestBody.getPayee()));
         TransferDTO transferDto = transService.create(CreateTransferDTO.builder()
                 .amount(BigDecimal.valueOf(createTransferRequestBody.getValue()))
                 .userFrom(payer)

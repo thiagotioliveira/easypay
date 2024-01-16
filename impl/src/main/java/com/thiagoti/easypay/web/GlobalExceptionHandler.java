@@ -8,17 +8,16 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.util.UrlPathHelper;
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BusinessRuleException.class)
-    public Error handleBusinessRuleException(BusinessRuleException ex, HttpServletRequest request) {
+    public ResponseEntity<Error> handleBusinessRuleException(BusinessRuleException ex, HttpServletRequest request) {
         var error = new Error();
         error.setMessage(ex.getMessage());
         error.setStatus(400);
@@ -33,8 +32,7 @@ class GlobalExceptionHandler {
                 error.addDetailsItem(detail);
             });
         }
-
-        return error;
+        return new ResponseEntity<Error>(error, ex.getStatus());
     }
 
     private static String getPathFromRequest(HttpServletRequest request) {
