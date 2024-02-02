@@ -1,7 +1,7 @@
 package com.thiagoti.easypay.mock;
 
-import com.thiagoti.easypay.model.entity.User;
-import com.thiagoti.easypay.model.entity.Wallet;
+import com.thiagoti.easypay.domain.entities.User;
+import com.thiagoti.easypay.domain.entities.Wallet;
 import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

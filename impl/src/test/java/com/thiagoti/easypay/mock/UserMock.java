@@ -1,6 +1,6 @@
 package com.thiagoti.easypay.mock;
 
-import com.thiagoti.easypay.model.entity.User;
+import com.thiagoti.easypay.domain.entities.User;
 import java.util.Random;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
